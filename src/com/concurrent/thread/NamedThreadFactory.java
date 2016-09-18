@@ -5,11 +5,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class NamedThreadFactory implements ThreadFactory {
 
-	//全局就一个变量，static修饰
 	private static final AtomicInteger poolId = new AtomicInteger();
 	
 	private final AtomicInteger nextId = new AtomicInteger();
-	//线程的名字前缀
 	private final String prefix;
 	private boolean daemon;
 	private final ThreadGroup group;
