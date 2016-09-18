@@ -12,6 +12,12 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * fork es <ThreadPool>  
+ * 封装了线程池，用于多种线程池的管理
+ * @author machao
+ *
+ */
 public class ThreadPool {
 
 	public static class Named {
