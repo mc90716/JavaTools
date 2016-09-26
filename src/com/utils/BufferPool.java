@@ -37,6 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 一个Buffer的内存池，用于控制申请内存的大小，同时对于每个来申请内存的线程来
  * 说是公平的，最先给等待时间最长的线程分配内存
+ * fork from kafka 1.0.1
  * @author 云袭
  *
  */
