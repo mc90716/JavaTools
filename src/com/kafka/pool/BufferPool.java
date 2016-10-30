@@ -44,7 +44,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public final class BufferPool {
 
     private final long totalMemory;
-    private final int poolableSize; //free里面每个ByteBuffer的大小
+    //free里面每个ByteBuffer的大小，凡是该大小的回收时都被放到free中的，申请的时候可以直接从里面取出来
+    private final int poolableSize;
     private final ReentrantLock lock;
     private final Deque<ByteBuffer> free;  //内存池，不会实际分配内存，只是做个标记
     private final Deque<Condition> waiters;
@@ -60,7 +61,7 @@ public final class BufferPool {
      * @param time time instance
      * @param metricGrpName logical group name for metrics
      */
-    public BufferPool(long memory, int poolableSize, Time time, String metricGrpName) {
+    public BufferPool(long memory, int poolableSize, Time time) {
         this.poolableSize = poolableSize;
         this.lock = new ReentrantLock();
         this.free = new ArrayDeque<ByteBuffer>();
