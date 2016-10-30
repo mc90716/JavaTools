@@ -41,6 +41,28 @@ public class TimerTaskList implements Delayed {
 		}
 	}
 	
+	public void add(TimerTaskEntry timerTaskEntry) {
+		boolean done = false;
+		while(!done) {
+			timerTaskEntry.remove();
+			
+			synchronized (this) {
+				synchronized (timerTaskEntry) {
+					if(timerTaskEntry.list == null) {
+						TimerTaskEntry tail = root.prev;
+						timerTaskEntry.next = root;
+						timerTaskEntry.prev = tail;
+						timerTaskEntry.list = this;
+						tail.next = timerTaskEntry;
+						root.prev = timerTaskEntry;
+						taskCounter.incrementAndGet();
+						done = true;
+					}
+				}
+			}
+		}
+	}
+	
 	public void remove(TimerTaskEntry entry) {
 		
 	}

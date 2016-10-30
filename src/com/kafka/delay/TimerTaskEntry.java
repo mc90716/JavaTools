@@ -10,10 +10,11 @@ package com.kafka.delay;
 public class TimerTaskEntry implements Comparable<TimerTaskEntry> {
 
 	private TimerTask timerTask;
-	private long expirationMs;
+	//该任务的延时多久执行
+	public long expirationMs;
 	public TimerTaskEntry next = null;
 	public TimerTaskEntry prev = null;
-	private TimerTaskList list = null;
+	public TimerTaskList list = null;
 
 	public TimerTaskEntry(TimerTask timerTask, long expirationMs) {
 		this.timerTask = timerTask;
