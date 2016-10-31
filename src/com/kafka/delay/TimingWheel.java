@@ -49,6 +49,10 @@ public class TimingWheel {
 			long virtualId = expirationMs / tickMs;
 			int index = (int)(virtualId % wheelSize);
 			TimerTaskList bucket = buckets[index];
+			bucket.add(timerTaskEntry);
+			if(bucket.setExpiration(virtualId * tickMs)) {
+				queue.offer(bucket);
+			}
 			return true;
 		} else {
 			if(this.overflowWheel == null) {

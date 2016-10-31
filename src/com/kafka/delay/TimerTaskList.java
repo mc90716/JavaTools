@@ -5,6 +5,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * TimerTaskList是一个双向环状链表，root节点的pre节点是tail节点，tail节点的next节点是root节点
+ * 当调用add方法往list中添加新节点的时候，新节点被添加到尾部
+ * @author 云袭
+ *
+ */
 public class TimerTaskList implements Delayed {
 
 	/**
@@ -20,8 +26,8 @@ public class TimerTaskList implements Delayed {
 		this.taskCounter = taskCounter;
 	}
 	
-	public void setExpiration(long expirationMs) {
-		this.expiration.set(expirationMs);
+	public boolean setExpiration(long expirationMs) {
+		return this.expiration.getAndSet(expirationMs) != expirationMs;
 	}
 	
 	/**
@@ -41,6 +47,10 @@ public class TimerTaskList implements Delayed {
 		}
 	}
 	
+	/**
+	 * 把一个Timer Task添加到List中
+	 * @param timerTaskEntry
+	 */
 	public void add(TimerTaskEntry timerTaskEntry) {
 		boolean done = false;
 		while(!done) {
@@ -63,18 +73,42 @@ public class TimerTaskList implements Delayed {
 		}
 	}
 	
-	public void remove(TimerTaskEntry entry) {
-		
+	public void remove(TimerTaskEntry timerTaskEntry) {
+		synchronized (this) {
+			synchronized (timerTaskEntry) {
+				if(timerTaskEntry.list == this) {
+					timerTaskEntry.next.prev = timerTaskEntry.prev;
+					timerTaskEntry.prev.next = timerTaskEntry.next;
+					timerTaskEntry.next = null;
+					timerTaskEntry.prev = null;
+					timerTaskEntry.list = null;
+					taskCounter.decrementAndGet();
+				}
+			}
+		}
+	}
+	
+	@Override
+	public long getDelay(TimeUnit unit) {
+		return unit.convert(Math.max(getExpiration() - TimeUnit.NANOSECONDS.toMillis(System.nanoTime()), 0), 
+				TimeUnit.MILLISECONDS);
+	}
+
+	
+	public long getExpiration() {
+		return expiration.get();
 	}
 	
 	@Override
 	public int compareTo(Delayed o) {
-		return 0;
-	}
-
-	@Override
-	public long getDelay(TimeUnit unit) {
-		return 0;
+		TimerTaskList other = (TimerTaskList)o;
+		if(getExpiration() > other.getExpiration()) {
+			return -1;
+		} else if(getExpiration() > other.getExpiration()) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 }
