@@ -23,9 +23,9 @@ public enum IndexTimeType {
 	public abstract String getIndexTime(String time);
 	
 	public static void main(String[] args) {
-		IndexTimeType year = IndexTimeType.valueOf("YEAR");
-		//IndexTimeType month = IndexTimeType.valueOf("MONTH");
+//		IndexTimeType year = IndexTimeType.valueOf("YEAR");
+		IndexTimeType month = IndexTimeType.valueOf("MONTH");
 		//IndexTimeType day = IndexTimeType.valueOf("DAY");
-		System.out.println(year.getIndexTime("2016-10-26T09:18:21.779Z"));
+		System.out.println(month.getIndexTime("2016-10-26T09:18:21.779Z"));
 	}
 }

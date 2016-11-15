@@ -22,6 +22,7 @@ public class NetWorkSend extends ByteBufferSend {
 		delimited[0] = ByteBuffer.allocate(4);
 		delimited[0].putInt(size);
 		delimited[0].rewind();
+		//数组的拷贝的话尽量使用这种方式
 		System.arraycopy(buffers, 0, delimited, 1, buffers.length);
 		return delimited;
 	}

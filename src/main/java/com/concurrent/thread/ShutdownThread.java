@@ -21,7 +21,7 @@ public abstract class ShutdownThread extends Thread {
 	}
 	
 	public void shutdown() throws InterruptedException {
-		initShutdown();
+        initShutdown();
 		awaitShutdown();
 	}
 	
