@@ -25,6 +25,7 @@ public class ThreadPool {
 		public static final String index = "INDEX";
 		public static final String format = "FOTMAT";
 		public static final String read = "READ";
+		public static final String LISTENER = "LISTENER";
 	}
 
 	public static final String THREADPOOL_GROUP = "threadpool.";
