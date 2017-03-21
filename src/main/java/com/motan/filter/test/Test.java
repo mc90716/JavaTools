@@ -1,7 +1,10 @@
 package com.motan.filter.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import com.motan.filter.filter.AccessLogFilter;
 import com.motan.filter.filter.ActiveLimitFilter;
@@ -26,5 +29,8 @@ public class Test {
 			};
 		}
 		System.out.println(lastProvider.call("call chain"));
+//		HashMap<K, V>
+//		LinkedHashMap<K, V>
+//		WeakHashMap<K, V>
 	}
 }
