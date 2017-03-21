@@ -9,7 +9,7 @@ public class AccessLogFilter implements Filter {
 		System.out.println("Before AccessLogFilter");
 		String response = caller.call(request);
 		System.out.println("After AccessLogFilter");
-		return caller.call(response);
+		return response;
 	}
 
 }
