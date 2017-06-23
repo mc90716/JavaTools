@@ -1,5 +1,8 @@
 package com.concurrent.thread;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -11,6 +14,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.concurrent.thread.ThreadPoolStats.Stats;
 
 /**
  * fork es <ThreadPool>  
@@ -108,6 +113,40 @@ public class ThreadPool {
 		}
 	}
 
+	public ThreadPoolStats stats() {
+        List<ThreadPoolStats.Stats> stats = new ArrayList<>();
+        for (ExecutorHolder holder : executorHolderMap.values()) {
+            String name = holder.info.getName();
+            if ("same".equals(name)) {
+                continue;
+            }
+            int threads = -1;
+            int queue = -1;
+            int active = -1;
+            long rejected = -1;
+            int largest = -1;
+            long completed = -1;
+//            int coreSize = -1;
+//            int maxSize = -1;
+            if (holder.executor() instanceof ThreadPoolExecutor) {
+                ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) holder.executor();
+                threads = threadPoolExecutor.getPoolSize();
+//                coreSize = threadPoolExecutor.getCorePoolSize();
+//                maxSize = threadPoolExecutor.getMaximumPoolSize();
+                queue = threadPoolExecutor.getQueue().size();
+                active = threadPoolExecutor.getActiveCount();
+                largest = threadPoolExecutor.getLargestPoolSize();
+                completed = threadPoolExecutor.getCompletedTaskCount();
+               /* RejectedExecutionHandler rejectedExecutionHandler = threadPoolExecutor.getRejectedExecutionHandler();
+                if (rejectedExecutionHandler instanceof XRejectedExecutionHandler) {
+                    rejected = ((XRejectedExecutionHandler) rejectedExecutionHandler).rejected();
+                }*/
+            }
+            stats.add(new ThreadPoolStats.Stats(name, threads, queue, active, rejected, largest, completed));
+        }
+        return new ThreadPoolStats(stats);
+    }
+	
 	private Info builderInfo() {
 		return new Info();
 	}
@@ -161,6 +200,30 @@ public class ThreadPool {
 			this.type = type;
 			return this;
 		}
-
+	}
+	
+	public static void main(String[] args) throws Exception {
+		ThreadPool threadPool = new ThreadPool(null);
+		for(int i = 0; i < 100; i++) {
+			threadPool.executor(ThreadPool.Named.index).execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(100000L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
+		Iterator<Stats> iter = threadPool.stats().iterator();
+		while(iter.hasNext()) {
+			Stats stats = iter.next();
+			System.out.println("Queue Size is [" + stats.getQueue() + "],Active Count is [" +
+					stats.getActive() + "], Stats Name is [" + stats.getName() + 
+					"], Stats Threads Count is [" + stats.getThreads() + "]");
+		}
 	}
 }
