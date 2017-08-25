@@ -1,4 +1,4 @@
-package com.hash;
+package com.hash.ketama;
 
 
 import java.util.ArrayList;
